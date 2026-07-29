@@ -1,0 +1,33 @@
+{
+  "name": "opencode-skill-picker",
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "npm@11.12.1",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "./tui": "./dist/tui.js"
+  },
+  "engines": {
+    "opencode": "1.18.4"
+  },
+  "scripts": {
+    "build": "esbuild src/tui.tsx --bundle --outfile=dist/tui.js --platform=node --target=es2022 --format=esm --packages=external --jsx=automatic --jsx-import-source=@opentui/solid",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@opencode-ai/plugin": "1.18.4",
+    "@opentui/core": "0.4.5",
+    "@opentui/solid": "0.4.5",
+    "solid-js": "1.9.12"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "1.18.4",
+    "@opentui/core": "0.4.5",
+    "@opentui/solid": "0.4.5",
+    "esbuild": "0.25.8",
+    "solid-js": "1.9.12",
+    "typescript": "5.9.3"
+  }
+}
