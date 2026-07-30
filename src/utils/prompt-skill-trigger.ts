@@ -23,7 +23,7 @@ export function updatePromptWithSkill(
 ) {
   if (!prompt) return;
   const currentTrigger = findSkillTrigger(
-    prompt.current.input,
+    editor.plainText,
     trigger.cursorOffset,
   );
   if (!currentTrigger || currentTrigger.input !== trigger.input) return;

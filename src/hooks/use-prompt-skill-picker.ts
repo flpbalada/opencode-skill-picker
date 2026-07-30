@@ -44,13 +44,13 @@ export function usePromptSkillPicker(
     try {
       const skills = await loadSkills(api);
       const currentTrigger = findSkillTrigger(
-        prompt?.current.input ?? "",
-        trigger.cursorOffset,
+        editor.plainText,
+        editor.logicalCursor.offset,
       );
       if (
         !currentTrigger ||
         currentTrigger.input !== trigger.input ||
-        editor.cursorOffset !== trigger.cursorOffset
+        currentTrigger.cursorOffset !== trigger.cursorOffset
       )
         return;
       if (api.ui.dialog.open) return;
@@ -67,10 +67,12 @@ export function usePromptSkillPicker(
   };
 
   const handleInputChange = (editor: PromptEditor | undefined) => {
-    const input = prompt?.current.input;
-    if (input === undefined || !editor) return;
+    if (!prompt || !editor) return;
 
-    const trigger = findSkillTrigger(input, editor.cursorOffset);
+    const trigger = findSkillTrigger(
+      editor.plainText,
+      editor.logicalCursor.offset,
+    );
     if (!trigger) {
       blockedTrigger = undefined;
       return;
