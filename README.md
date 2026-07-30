@@ -2,6 +2,8 @@
 
 A TUI plugin that adds a searchable skill picker to OpenCode.
 
+![OpenCode Skill Picker demo](demo.gif)
+
 ## Use
 
 1. Type `#` anywhere in an OpenCode prompt.
