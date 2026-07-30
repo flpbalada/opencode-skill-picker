@@ -18,7 +18,7 @@
     "./tui": "./dist/tui.js"
   },
   "engines": {
-    "opencode": "1.18.4"
+    "opencode": ">=1.18.4 <2"
   },
   "scripts": {
     "build": "esbuild src/tui.tsx --bundle --outfile=dist/tui.js --platform=node --target=es2022 --format=esm --packages=external --jsx=automatic --jsx-import-source=@opentui/solid",
