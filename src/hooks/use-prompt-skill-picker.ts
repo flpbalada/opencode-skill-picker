@@ -6,7 +6,7 @@ import type {
 import { showSkillDialog, type Skill } from "../components/skill-dialog";
 import {
   findSkillTrigger,
-  type SkillTrigger,
+  type SkillInsertion,
   updatePromptWithSkill,
 } from "../utils/prompt-skill-trigger";
 import {
@@ -30,27 +30,24 @@ export function usePromptSkillPicker(
   const handleSkillSelect = (
     skill: Skill,
     editor: PromptEditor,
-    trigger: SkillTrigger,
+    insertion: SkillInsertion,
   ) => {
-    updatePromptWithSkill(prompt, editor, skill.name, trigger);
+    updatePromptWithSkill(prompt, editor, skill.name, insertion);
     closeDialogAndFocusPrompt();
   };
 
   const openSkillDialog = async (
     editor: PromptEditor,
-    trigger: SkillTrigger,
+    insertion: SkillInsertion,
   ) => {
     isLoading = true;
     try {
       const skills = await loadSkills(api);
-      const currentTrigger = findSkillTrigger(
-        editor.plainText,
-        editor.logicalCursor.offset,
-      );
+      if (!prompt?.focused || api.renderer.currentFocusedEditor !== editor) return;
+      if (editor.plainText !== insertion.input) return;
       if (
-        !currentTrigger ||
-        currentTrigger.input !== trigger.input ||
-        currentTrigger.cursorOffset !== trigger.cursorOffset
+        insertion.replaceTrigger &&
+        editor.logicalCursor.offset !== insertion.cursorOffset
       )
         return;
       if (api.ui.dialog.open) return;
@@ -58,7 +55,7 @@ export function usePromptSkillPicker(
       showSkillDialog(
         api,
         skills,
-        (skill) => handleSkillSelect(skill, editor, trigger),
+        (skill) => handleSkillSelect(skill, editor, insertion),
         () => prompt?.focus(),
       );
     } finally {
@@ -87,18 +84,35 @@ export function usePromptSkillPicker(
     openSkillDialog(editor, trigger);
   };
 
+  const openSkillPicker = () => {
+    if (!prompt?.focused) return false;
+    if (isLoading || api.ui.dialog.open) return true;
+
+    const editor = api.renderer.currentFocusedEditor;
+    if (!editor) return true;
+
+    openSkillDialog(editor, {
+      input: editor.plainText,
+      cursorOffset: editor.logicalCursor.offset,
+      replaceTrigger: false,
+    });
+    return true;
+  };
+
   const inputObserver = usePromptInputObserver(
     api,
     () => prompt,
     handleInputChange,
   );
 
-  return (value: TuiPromptRef | undefined) => {
+  const handlePromptRef = (value: TuiPromptRef | undefined) => {
     if (!value) inputObserver.detach();
     prompt = value;
     forwardRef?.(value);
     queueMicrotask(inputObserver.attach);
   };
+
+  return { handlePromptRef, openSkillPicker };
 }
 
 async function loadSkills(api: TuiPluginApi) {

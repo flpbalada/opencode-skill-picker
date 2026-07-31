@@ -28,16 +28,69 @@ OpenCode Skill Picker avoids replacing or submitting your draft. It inserts `#sk
 
 Requires OpenCode 1.18.4 or later.
 
-Add the plugin to your OpenCode TUI config:
+Add the plugin to your OpenCode TUI config. Plugin options use the tuple form shown below:
 
 - Globally: `~/.config/opencode/tui.json`
 - For one project: `.opencode/tui.json`
 
+### Direct binding
+
 ```json
 {
   "$schema": "https://opencode.ai/tui.json",
-  "plugin": ["opencode-skill-picker"]
+  "plugin": [
+    [
+      "opencode-skill-picker",
+      {
+        "keybinds": {
+          "skill_picker_open": "ctrl+k"
+        }
+      }
+    ]
+  ]
 }
 ```
+
+### Leader binding
+
+```json
+{
+  "$schema": "https://opencode.ai/tui.json",
+  "plugin": [
+    [
+      "opencode-skill-picker",
+      {
+        "keybinds": {
+          "skill_picker_open": "<leader>k"
+        }
+      }
+    ]
+  ]
+}
+```
+
+`<leader>k` is a sequence: press your configured leader, release it, then press `k`. OpenCode resolves `<leader>` from your TUI configuration and manages the sequence timeout and key consumption. The example uses `k` because `<leader>s` conflicts with OpenCode's default `status_view` binding.
+
+### Multiple bindings
+
+```json
+{
+  "$schema": "https://opencode.ai/tui.json",
+  "plugin": [
+    [
+      "opencode-skill-picker",
+      {
+        "keybinds": {
+          "skill_picker_open": ["ctrl+k", "<leader>k"]
+        }
+      }
+    ]
+  ]
+}
+```
+
+Each configured binding opens the same picker flow. OpenCode handles binding conflicts using its normal keymap behavior.
+
+No shortcut is enabled by default. Omit `keybinds.skill_picker_open` to leave the command unbound and available only through the command palette. A native comma-separated string can also define multiple bindings.
 
 OpenCode installs the npm package automatically. Quit and restart OpenCode to load the plugin.
